@@ -17,6 +17,19 @@ import backtype.storm.utils.Utils;
  * @author kimutan_sk
  */
 public class HashTagSampleTopology {
+	
+	/**
+	 * トポロジを起動する。<br/>
+	 * <br/>
+	 * 第１引数　：　SpoutからTweet取得時のフィルタ（未使用）<br/>
+	 * 第２引数　：　Boltで判定する際のハッシュタグ<br/>
+	 * 第３引数　：　TwitterUserid<br/>
+	 * 第４引数　：　TwitterPassword<br/>
+	 * 第５引数　：　トポロジ名（未入力の場合、ローカルクラスタで起動）<br/>
+	 * <br/>
+	 * @param args 起動引数
+	 * @throws Exception 起動失敗時
+	 */
 	public static void main(String[] args) throws Exception {
 
 		// 引数はHashTagDetectTopologyと同一のため、検索条件は無視
