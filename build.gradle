@@ -7,7 +7,6 @@ targetCompatibility = jdkVersion
 
 group = 'storm.sample'
 version = '0.0.1'
-artifact = 'StormSampleProject'
 
 eclipse {
 	pathVariables 'GRADLE_USER_HOME': gradle.gradleUserHomeDir
@@ -31,4 +30,5 @@ dependencies {
 	compile files('lib/acromusashi-stream-1.0.0.jar')
 	compile 'commons-lang:commons-lang:2.6'
 	compile 'storm:storm:0.8.1'
+    testCompile 'junit:junit:4.11'
 }
