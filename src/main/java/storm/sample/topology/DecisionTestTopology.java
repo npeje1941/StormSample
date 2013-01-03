@@ -26,9 +26,9 @@ import backtype.storm.utils.Utils;
 public class DecisionTestTopology
 {
     /**
-     * Default Constructor
+     * デフォルトコンストラクタ
      */
-    public DecisionTestTopology()
+    private DecisionTestTopology()
     {}
 
     /**
@@ -38,16 +38,27 @@ public class DecisionTestTopology
      */
     public static class JudgeBolt extends BaseRichBolt
     {
-        OutputCollector collector_;
+        /** serialVersionUID */
+        private static final long serialVersionUID = 1L;
 
-        int             index_;
+        /** OutputCollector */
+        OutputCollector           collector;
 
+        /** コンポーネントインデックス */
+        int                       index;
+
+        /**
+         * デフォルトコンストラクタ
+         */
+        public JudgeBolt()
+        {}
+
+        @SuppressWarnings("rawtypes")
         @Override
-        public void prepare(Map conf, TopologyContext context,
-                OutputCollector collector)
+        public void prepare(Map conf, TopologyContext context, OutputCollector collector)
         {
-            this.collector_ = collector;
-            this.index_ = context.getThisTaskIndex();
+            this.collector = collector;
+            this.index = context.getThisTaskIndex();
         }
 
         @Override
@@ -57,20 +68,18 @@ public class DecisionTestTopology
 
             if (word.length() <= 5)
             {
-                System.out.println("JudgeBolt_" + this.index_ + "ToShortWord:"
-                        + word);
+                System.out.println("JudgeBolt_" + this.index + "ToShortWord:" + word);
                 // 短い単語用のStreamに流す
-                this.collector_.emit("ShortWord", new Values(word));
+                this.collector.emit("ShortWord", new Values(word));
             }
             else
             {
-                System.out.println("JudgeBolt_" + this.index_ + "ToLongWord:"
-                        + word);
+                System.out.println("JudgeBolt_" + this.index + "ToLongWord:" + word);
                 // 長い単語用のStreamに流す
-                this.collector_.emit("LongWord", new Values(word));
+                this.collector.emit("LongWord", new Values(word));
             }
 
-            this.collector_.ack(tuple);
+            this.collector.ack(tuple);
         }
 
         @Override
@@ -89,24 +98,35 @@ public class DecisionTestTopology
      */
     public static class ShortWordBolt extends BaseRichBolt
     {
-        OutputCollector collector_;
+        /** serialVersionUID */
+        private static final long serialVersionUID = 1L;
 
-        int             index_;
+        /** OutputCollector */
+        OutputCollector           collector;
 
+        /** コンポーネントインデックス */
+        int                       index;
+
+        /**
+         * デフォルトコンストラクタ
+         */
+        public ShortWordBolt()
+        {}
+
+        @SuppressWarnings("rawtypes")
         @Override
-        public void prepare(Map conf, TopologyContext context,
-                OutputCollector collector)
+        public void prepare(Map conf, TopologyContext context, OutputCollector collector)
         {
-            this.collector_ = collector;
-            this.index_ = context.getThisTaskIndex();
+            this.collector = collector;
+            this.index = context.getThisTaskIndex();
         }
 
         @Override
         public void execute(Tuple tuple)
         {
             String word = tuple.getString(0);
-            System.out.println("ShortWordBolt_" + this.index_ + ":" + word);
-            this.collector_.ack(tuple);
+            System.out.println("ShortWordBolt_" + this.index + ":" + word);
+            this.collector.ack(tuple);
         }
 
         @Override
@@ -121,24 +141,35 @@ public class DecisionTestTopology
      */
     public static class LongWordBolt extends BaseRichBolt
     {
-        OutputCollector collector_;
+        /** serialVersionUID */
+        private static final long serialVersionUID = 1L;
 
-        int             index_;
+        /** OutputCollector */
+        OutputCollector           collector;
 
+        /** コンポーネントインデックス */
+        int                       index;
+
+        /**
+         * デフォルトコンストラクタ
+         */
+        public LongWordBolt()
+        {}
+
+        @SuppressWarnings("rawtypes")
         @Override
-        public void prepare(Map conf, TopologyContext context,
-                OutputCollector collector)
+        public void prepare(Map conf, TopologyContext context, OutputCollector collector)
         {
-            this.collector_ = collector;
-            this.index_ = context.getThisTaskIndex();
+            this.collector = collector;
+            this.index = context.getThisTaskIndex();
         }
 
         @Override
         public void execute(Tuple tuple)
         {
             String word = tuple.getString(0);
-            System.out.println("LongWordBolt_" + this.index_ + ":" + word);
-            this.collector_.ack(tuple);
+            System.out.println("LongWordBolt_" + this.index + ":" + word);
+            this.collector.ack(tuple);
         }
 
         @Override
@@ -173,26 +204,21 @@ public class DecisionTestTopology
         TopologyBuilder builder = new TopologyBuilder();
 
         // Get setting from StormConfig Object
-        int wordSpoutPara = StormConfigUtil.getIntValue(conf,
-                "WordSpout.Parallelism", 2);
-        int judgeBoltPara = StormConfigUtil.getIntValue(conf,
-                "JudgeBolt.Parallelism", 2);
-        int shortWordBoltPara = StormConfigUtil.getIntValue(conf,
-                "ShortWord.Parallelism", 2);
-        int longWordBoltPara = StormConfigUtil.getIntValue(conf,
-                "LongWord.Parallelism", 2);
+        int wordSpoutPara = StormConfigUtil.getIntValue(conf, "WordSpout.Parallelism", 2);
+        int judgeBoltPara = StormConfigUtil.getIntValue(conf, "JudgeBolt.Parallelism", 2);
+        int shortWordBoltPara = StormConfigUtil.getIntValue(conf, "ShortWord.Parallelism", 2);
+        int longWordBoltPara = StormConfigUtil.getIntValue(conf, "LongWord.Parallelism", 2);
 
         builder.setSpout("WordSpout", new TestWordSpout(), wordSpoutPara);
-        builder.setBolt("JudgeBolt", new JudgeBolt(), judgeBoltPara).fieldsGrouping(
-                "WordSpout", new Fields("word"));
+        builder.setBolt("JudgeBolt", new JudgeBolt(), judgeBoltPara).fieldsGrouping("WordSpout", new Fields("word"));
 
         // ShortWordのStreamを読み込むよう定義
-        builder.setBolt("ShortWord", new ShortWordBolt(), shortWordBoltPara).fieldsGrouping(
-                "JudgeBolt", "ShortWord", new Fields("word"));
+        builder.setBolt("ShortWord", new ShortWordBolt(), shortWordBoltPara).fieldsGrouping("JudgeBolt", "ShortWord",
+                new Fields("word"));
 
         // LongWordのStreamを読み込むよう定義
-        builder.setBolt("LongWord", new LongWordBolt(), longWordBoltPara).fieldsGrouping(
-                "JudgeBolt", "LongWord", new Fields("word"));
+        builder.setBolt("LongWord", new LongWordBolt(), longWordBoltPara).fieldsGrouping("JudgeBolt", "LongWord",
+                new Fields("word"));
 
         if (isLocal)
         {
@@ -204,8 +230,7 @@ public class DecisionTestTopology
         }
         else
         {
-            StormSubmitter.submitTopology("DecisionTest", conf,
-                    builder.createTopology());
+            StormSubmitter.submitTopology("DecisionTest", conf, builder.createTopology());
         }
     }
 }
