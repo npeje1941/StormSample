@@ -6,9 +6,8 @@
 		<BugCode name="EI, EI2" />
 	</Match>
 	
-	<Match>
-		<Class name="~.*Test" />
-		<BugCode name="UwF, NP" />
+	<Match classregex=".*Test">
+		<BugCode name="UwF, NP, BC" />
 	</Match>
 
 </FindBugsFilter>
