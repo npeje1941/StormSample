@@ -1,4 +1,4 @@
-package jp.gr.kmtn.stormsample.topology;
+package storm.sample.topology;
 
 import java.util.Map;
 
