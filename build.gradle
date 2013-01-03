@@ -1,8 +1,22 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+def jdkVersion = 1.6
+sourceCompatibility = jdkVersion
+targetCompatibility = jdkVersion
+
+group = 'storm.sample'
+version = '0.0.1'
+artifact = 'StormSampleProject'
+
 eclipse {
 	pathVariables 'GRADLE_USER_HOME': gradle.gradleUserHomeDir
+}
+
+eclipse.classpath.file {
+    whenMerged { classpath ->
+            classpath.entries.findAll { entry -> entry.kind == 'output' }*.path = 'target/classes'
+    }
 }
 
 repositories {

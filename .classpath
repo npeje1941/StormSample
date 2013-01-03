@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
 	<classpathentry kind="output" path="target/classes"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="target/classes"/>
 	<classpathentry sourcepath="GRADLE_USER_HOME/caches/artifacts-15/filestore/commons-lang/commons-lang/2.6/source/67313d715fbf0ea4fd0bdb69217fb77f807a8ce5/commons-lang-2.6-sources.jar" kind="var" path="GRADLE_USER_HOME/caches/artifacts-15/filestore/commons-lang/commons-lang/2.6/jar/ce1edb914c94ebc388f086c6827e8bdeec71ac2/commons-lang-2.6.jar" exported="true"/>
 	<classpathentry kind="var" path="GRADLE_USER_HOME/caches/artifacts-15/filestore/storm/storm/0.8.1/jar/41b8c467f8b19e0047d4f5eee75bebd8b54c31ba/storm-0.8.1.jar" exported="true"/>
 	<classpathentry sourcepath="GRADLE_USER_HOME/caches/artifacts-15/filestore/org.clojure/clojure/1.4.0/source/644825d88fed1e98c005131f8e42d7a66090b4c7/clojure-1.4.0-sources.jar" kind="var" path="GRADLE_USER_HOME/caches/artifacts-15/filestore/org.clojure/clojure/1.4.0/jar/867288bc07a6514e2e0b471c5be0bccd6c3a51f9/clojure-1.4.0.jar" exported="true"/>
