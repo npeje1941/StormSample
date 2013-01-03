@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="false">
+<fileset-config file-format-version="1.2.0" simple-config="false" sync-formatter="false">
   <local-check-config name="StormSampleCheckStyle" location="checkstyle.xml" type="project" description="">
     <additional-data name="protect-config-file" value="false"/>
   </local-check-config>
-  <fileset name="all" enabled="true" check-config-name="StormSampleCheckStyle" local="true">
-    <file-match-pattern match-pattern="." include-pattern="true"/>
+  <fileset name="JavaWithoutTestCode" enabled="true" check-config-name="StormSampleCheckStyle" local="true">
+    <file-match-pattern match-pattern="/*.java" include-pattern="true"/>
+    <file-match-pattern match-pattern="/*Test.java" include-pattern="false"/>
   </fileset>
 </fileset-config>
