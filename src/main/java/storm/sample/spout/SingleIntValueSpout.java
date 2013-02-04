@@ -43,7 +43,7 @@ public class SingleIntValueSpout extends BaseRichSpout
     {
         Random rnd = new Random();
         int createdValue = rnd.nextInt(10000);
-        this.collector.emit(new Values(createdValue));
+        this.collector.emit(new Values(createdValue), createdValue);
         Utils.sleep(1000);
     }
 

@@ -12,10 +12,13 @@ import backtype.storm.Config;
 import backtype.storm.ILocalCluster;
 import backtype.storm.Testing;
 import backtype.storm.generated.StormTopology;
+import backtype.storm.testing.AckTracker;
 import backtype.storm.testing.CompleteTopologyParam;
+import backtype.storm.testing.FeederSpout;
 import backtype.storm.testing.MkClusterParam;
 import backtype.storm.testing.MockedSources;
 import backtype.storm.testing.TestJob;
+import backtype.storm.testing.TrackedTopology;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
@@ -88,7 +91,74 @@ public class SquareBoltTest
                 throw ex;
             }
         }
-        
+
+        assertTrue(this.isAsserted);
+    }
+
+    /**
+     * SquareBoltにTupleを流してAckが返ることを確認する。<br/>
+     * 投入する値は「1」
+     * @throws Exception 実行失敗時
+     */
+    @Test
+    public void testExecute_Ack確認() throws Exception
+    {
+        this.isAsserted = false;
+        MkClusterParam mkClusterParam = new MkClusterParam();
+        Config daemonConf = new Config();
+        daemonConf.put(Config.STORM_LOCAL_MODE_ZMQ, false);
+        mkClusterParam.setDaemonConf(daemonConf);
+
+        try
+        {
+            Testing.withSimulatedTimeLocalCluster(mkClusterParam, new TestJob() {
+                @Override
+                public void run(ILocalCluster cluster)
+                {
+                    // 準備
+                    // Tracker生成
+                    AckTracker tracker = new AckTracker();
+                    FeederSpout spout = new FeederSpout(new Fields("Value"));
+                    spout.setAckFailDelegate(tracker);
+
+                    // Topology構成を生成
+                    TopologyBuilder builder = new TopologyBuilder();
+                    builder.setSpout("FeederSpout", spout);
+                    builder.setBolt("SquareBolt", new SquareBolt()).shuffleGrouping("FeederSpout");
+                    StormTopology topology = builder.createTopology();
+                    TrackedTopology tracked = Testing.mkTrackedTopology(cluster, topology);
+
+                    try
+                    {
+                        cluster.submitTopology("AckTest", new Config(), tracked.getTopology());
+                    }
+                    catch (Exception ex)
+                    {
+                        // 例外が発生した時点で失敗のため、returnで抜ける
+                        ex.printStackTrace();
+                        return;
+                    }
+
+                    // Tupleを流す
+                    spout.feed(new Values(1), 1);
+                    Testing.trackedWait(tracked, 1);
+                    
+                    // 検証
+                    // 検証OKだった場合検証OKフラグを設定
+                    SquareBoltTest.this.isAsserted = true;
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            // Windows上で実行した場合、ZooKeeperファイル削除に失敗してIOExceptionが発生する。
+            // そのため、IOExceptionが発生した場合は無視。
+            if ((ex instanceof IOException) == false)
+            {
+                throw ex;
+            }
+        }
+
         assertTrue(this.isAsserted);
     }
 
